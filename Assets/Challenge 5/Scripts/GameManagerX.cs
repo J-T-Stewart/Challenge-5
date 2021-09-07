@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class GameManagerX : MonoBehaviour
 {
     public TextMeshProUGUI scoreText;
-    public TextMeshProUGUI timerText;
+    public TextMeshProUGUI highscoreText;
     public TextMeshProUGUI gameOverText;
     public GameObject titleScreen;
     public Button restartButton; 
@@ -23,19 +23,8 @@ public class GameManagerX : MonoBehaviour
     private float minValueX = -3.75f; //  x value of the center of the left-most square
     private float minValueY = -3.75f; //  y value of the center of the bottom-most square
 
-    public float timeRemaining;
-
-    void Update() 
-    {
-        timerText.text = "Timer: " + (Mathf.FloorToInt(timeRemaining));
-
-        if (timeRemaining > 0 && isGameActive) {
-            timeRemaining -= Time.deltaTime;
-        }
-
-        if(timeRemaining < 0) {
-            GameOver();
-        }
+    void Start() {
+        highscoreText.text = "Highscore: " + GetInt("highscore");
     }
     
     // Start the game, remove title screen, reset score, and adjust spawnRate based on difficulty button clicked
@@ -95,12 +84,28 @@ public class GameManagerX : MonoBehaviour
         gameOverText.gameObject.SetActive(true);
         restartButton.gameObject.SetActive(true);
         isGameActive = false;
+
+        if (GetInt("highscore") < score) {
+            SetInt("highscore", score);
+        }
     }
 
     // Restart game by reloading the scene
     public void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    // Set the PlayerPref of KeyName with Value
+    public void SetInt(string KeyName, int Value)
+    {
+        PlayerPrefs.SetInt(KeyName, Value);
+    }
+
+    // Get the value of the PlayerPref of KeyName
+    public int GetInt(string KeyName)
+    {
+        return PlayerPrefs.GetInt(KeyName);
     }
 
 }
